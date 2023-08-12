@@ -11,6 +11,7 @@ import { CompaniesModule } from './companies/companies.module';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
+      ssl: process.env.STAGE === 'prod',
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
@@ -19,7 +20,6 @@ import { CompaniesModule } from './companies/companies.module';
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: true,
       dropSchema: false,
       logging: true,
     }),
