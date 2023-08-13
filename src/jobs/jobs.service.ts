@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { CompaniesService } from 'src/companies/companies.service';
 import { ProjectsService } from 'src/projects/projects.service';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Job } from './entities/job.entity';
+import { GetJobsDto } from './dto/get-job.dto';
 
 @Injectable()
 export class JobsService {
@@ -42,11 +42,17 @@ export class JobsService {
     }
   }
 
-  findAll(paginationDto: PaginationDto) {
-    const {limit = 100, offset = 0} = paginationDto
+  findAll(params: GetJobsDto) {
+
+    let where: any = {};
+
+    if(params.yearsRange) {
+      const years = params.yearsRange.split(',')
+      where.startDate = Raw((alias) => `${alias} BETWEEN :date1 AND :date2`, { date1: `${years[0]}-01-01`, date2: `${years[1]}-10-01` })
+    }
+
     return this.jobRepository.find({
-      take: limit,
-      skip: offset,
+      where: where,
       relations: {
         projects: {
           tools: true,

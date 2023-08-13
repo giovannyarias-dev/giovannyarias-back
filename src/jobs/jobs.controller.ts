@@ -3,6 +3,7 @@ import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { GetJobsDto } from './dto/get-job.dto';
 
 @Controller('jobs')
 export class JobsController {
@@ -14,7 +15,8 @@ export class JobsController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
+  findAll(@Query() paginationDto: GetJobsDto) {
+    console.log(paginationDto);
     return this.jobsService.findAll(paginationDto);
   }
 
